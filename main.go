@@ -16,7 +16,7 @@ const (
 func generateRandomElements(size int) []int {
 	// ваш код здесь
 	if size == 0 {
-return nil
+		return nil
 	}
 	slice := make([]int, size)
 	scr := rand.NewSource(time.Now().Unix())
@@ -29,49 +29,47 @@ return nil
 // maximum returns the maximum number of elements.
 func maximum(data []int) int {
 	// ваш код здесь
-	if data == nil{
+	if data == nil {
 		return 0
 	}
-	count := 0
-	for _, i := range data {
-		count = max(i, count)
+	maximum := 0
+	for _, num := range data {
+		maximum = max(num, maximum)
 	}
-	return count
+	return maximum
 }
 
 // maxChunks returns the maximum number of elements in a chunks.
 func maxChunks(data []int) int {
 	// ваш код здесь
-if data == nil{
-	return 0
-}
+	if data == nil {
+		fmt.Println("Slice is empty")
+		return 0
+	}
 	index := len(data) / CHUNKS
-	remainder := len(data) % CHUNKS
-	var dataPart []int
-	var wg sync.WaitGroup
-	wg.Add(8)
-	count := 0
-	for i := 0; i < 8; i++ {
 
+	var dataPart []int
+	var newData []int
+	var wg sync.WaitGroup
+	wg.Add(CHUNKS)
+	count := 0
+	for i := 0; i < CHUNKS; i++ {
 		go func(count int) {
-			maxInPart := 0
-			for j := 0; j < index; j++ {
-				maxInPart = max(data[j+count], maxInPart)
-			}
-			dataPart = append(dataPart, maxInPart)
 			defer wg.Done()
+			if i == 7 {
+				dataPart = data[count:]
+			} else {
+				dataPart = data[count:(count + index)]
+			}
+			maxInPart := maximum(dataPart)
+			newData = append(newData, maxInPart)
 		}(count)
 
 		count += index
+
 	}
 	wg.Wait()
-	for i := len(data) - remainder; i < len(data); i++ {
-		dataPart = append(dataPart, data[i])
-	}
-	maximum := 0
-	for _, j := range dataPart {
-		maximum = max(maximum, j)
-	}
+	maximum := maximum(newData)
 	return maximum
 }
 

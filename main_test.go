@@ -8,23 +8,35 @@ import (
 
 // Пишите тесты в этом файле
 func TestGenerateRandomElements(t *testing.T) {
-	for i := 0; i < 100; i++ {
-		slice := generateRandomElements(i)
-		assert.Len(t, slice, i)
+	sizes := []struct {
+		lenSlice int
+		want     int
+	}{
+		{lenSlice: 200, want: 200},
+		{lenSlice: 0, want: 0},
+		{lenSlice: 3000000, want: 3000000},
+		{lenSlice: 1, want: 1},
+	}
+
+	for _, s := range sizes {
+		slice := generateRandomElements(s.lenSlice)
+		assert.Len(t, slice, s.want)
 	}
 }
 
 func TestMaximum(t *testing.T) {
-	slice := make([]int, 200)
-	for i := 0; i < 200; i++ {
-		slice[i] = i
+	slices := []struct {
+		slice   []int
+		wantMax int
+	}{
+		{slice: []int{5, 2, 8, 145, 200, 3, 1, 25}, wantMax: 200},
+		{slice: nil, wantMax: 0,},
+		{slice: []int{3, 3, 3}, wantMax: 3},
+		{slice: []int{1}, wantMax: 1,},
 	}
-	max := maximum(slice)
-	assert.Equal(t, max, 199)
 
-	slice = nil
-	max = maximum(slice)
-	assert.Equal(t, max, 0)
+	for _, sl := range slices {
+		max := maximum(sl.slice)
+		assert.Equal(t, max, sl.wantMax)
+	}
 }
-
-
